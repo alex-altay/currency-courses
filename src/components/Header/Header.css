@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.header__title {
+  font-size: 32px;
+  font-weight: bold;
+}
+.header__subtitle {
+  font-size: 20px;
+}

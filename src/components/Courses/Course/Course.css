@@ -1,0 +1,9 @@
+.currency-courses__arrow, 
+.currency-courses__close {
+  height: 20px;
+  margin: 0 20px;
+  cursor: pointer;
+}
+.valute-key {
+  margin: 0 20px;
+}
