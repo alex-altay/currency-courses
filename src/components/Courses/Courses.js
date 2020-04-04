@@ -10,8 +10,10 @@ const courses = props => {
       ind = {ind} 
       fromKey={c.fromKey} 
       fromName={c.fromName} 
+      fromSymbol={c.fromSymbol}
       toKey={c.toKey}
       toName={c.toName}
+      toSymbol={c.toSymbol}
       forOne={c.forOne}
       quantity={c.quantity}
       forAll={c.forAll} 

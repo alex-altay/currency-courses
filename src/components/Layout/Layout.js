@@ -6,7 +6,8 @@ import Courses from '../Courses/Courses';
 import AddNewCurrency from '../AddNewCurrency/AddNewCurrency';
 
 
-const url = 'https://www.cbr-xml-daily.ru/daily_json.js';
+const URL = 'https://www.cbr-xml-daily.ru/daily_json.js';
+
 // Создаем рубль, потому что он отсутствует среди валют в API
 const RUB = {
   "ID": "R66666",
@@ -21,6 +22,43 @@ const RUB = {
 // Ключ, по которому храним данные о сохраненных валютах в localStorage браузера пользователя
 const LOCAL_STORAGE_KEY = 'defaultCurrenciesKeys';
 
+const SYMBOLS = {
+  AMD: '&#1423;',
+  AUD: '&#36;',
+  AZN: '&#8380;',
+  BGN: '',
+  BRL: '&#36;',
+  BYN: 'Br',
+  CAD: '&#36;',
+  CHF: '&#8355;',
+  CNY: '&#165;',
+  CZK: 'Kč',
+  DKK: 'kr',
+  EUR: '&#8364;',
+  GBP: '&#163;',
+  HKD: '&#36;',
+  HUF: 'Ft',
+  INR: '&#8377;',
+  JPY: '&#165;',
+  KGS: 'с',
+  KRW: '&#8361;',
+  KZT: '&#8376;',
+  MDL: 'L',
+  NOK: 'kr',
+  PLN: 'zł',
+  RON: 'L',
+  RUB: '&#8381;',
+  SEK: 'kr',
+  SGD: '&#36;',
+  TJS: 'с',
+  TMT: 'm',
+  TRY: '&#8378;',
+  UAH: '&#8372;',
+  USD: '&#36;',
+  UZS: 'so’m',
+  XDR: 'SDR',
+  ZAR: 'R'
+}
 
 class Layout extends Component {
   constructor(props) {
@@ -28,9 +66,13 @@ class Layout extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      dateString: null,
+      dateFull: null,
+      dateShort: null,
       allCurrencies: {},
-      defaultCurrenciesKeys: [{ fromKey: 'USD', toKey: 'RUB' }, { fromKey: 'EUR', toKey: 'RUB'}, { fromKey: 'GBP', toKey: 'EUR'}],
+      defaultCurrenciesKeys: [
+        { fromKey: 'USD', toKey: 'RUB' }, 
+        { fromKey: 'EUR', toKey: 'RUB'}, 
+        { fromKey: 'GBP', toKey: 'EUR'}],
       coursesList: [],
     }
   };
@@ -41,85 +83,90 @@ class Layout extends Component {
 
   // Если в localStorage браузера нет записей о курсах, устанавливаем курсы по умолчанию
   setDefaultCourses = allCurrencies => {
-    const coursesList = [];
+    let coursesList = [];
     for (const c of this.state.defaultCurrenciesKeys) {
-      const fromKey = c.fromKey;
-      const fromName = allCurrencies[fromKey].Name;
-      const toKey = c.toKey;
-      const toName = allCurrencies[toKey].Name;
-      const forOne = this.getForOne(fromKey, toKey, allCurrencies);
-      const quantity = 1;
-      const forAll = forOne * quantity;
-      coursesList.push({ fromKey: fromKey, fromName: fromName, toKey: toKey, toName: toName, forOne: forOne, quantity: quantity, forAll: forAll });
+      const course = this.assembleCourse(c.fromKey, c.toKey, allCurrencies);
+      coursesList.push(course);
     }
     return coursesList;
   }
 
-  addCourse = (event) => {
+  // Создает и возвращает объект курса в одном месте, чтобы не дублировать код
+  assembleCourse = (fromKey, toKey, allCurrencies, quantity=1) => {    
+    const forOne = this.calcCourseForOneCoin(fromKey, toKey, allCurrencies);    
+    const course = {
+      fromKey: fromKey,
+      fromName: allCurrencies[fromKey].Name,
+      fromSymbol: SYMBOLS[fromKey],
+      toKey: toKey,
+      toName: allCurrencies[toKey].Name,
+      toSymbol: SYMBOLS[toKey],
+      forOne: forOne,
+      quantity: 1,
+      forAll: quantity * forOne}
+    return course;
+  }
+
+  addCourseButtonHandler = (event) => {
     event.preventDefault();
     const fromKey = event.target.elements.fromKey.value;
     const toKey = event.target.elements.toKey.value;
-    const courses = this.state.coursesList.slice();
-    let course = {};
-    course.fromKey = fromKey;
-    course.fromName = this.state.allCurrencies[fromKey].Name;
-    course.toKey  = toKey;
-    course.toName = this.state.allCurrencies[toKey].Name;
-    course.forOne = this.getForOne(fromKey, toKey, this.state.allCurrencies);
-    course.quantity = 1;
-    course.forAll = course.quantity * course.forOne;
-    courses.push(course);
-    this.setState({coursesList: courses});
-    this.updateLocalStorage(courses);
+    const coursesList = this.state.coursesList.slice();
+    const course = this.assembleCourse(fromKey, toKey, this.state.allCurrencies);  
+    coursesList.push(course);
+    this.setState({ coursesList: coursesList });
+    this.updateLocalStorage(coursesList);
     event.target.reset();
   }
 
-
-  getForOne(fromKey, toKey, allCurrencies) {
-    let forOne;
+  calcCourseForOneCoin(fromKey, toKey, allCurrencies) {
+    let courseForOneCoin;
+    const toValue = Number(allCurrencies[toKey].Value);
+    const toNominal = Number(allCurrencies[toKey].Nominal);
+    const fromValue = Number(allCurrencies[fromKey].Value);
+    const fromNominal = Number(allCurrencies[fromKey].Nominal);
     if (toKey === 'RUB') {
-      forOne = Number(allCurrencies[fromKey].Value);
+      courseForOneCoin = fromValue/fromNominal;
     } else if (fromKey === 'RUB') {
-      forOne = 1 / Number(allCurrencies[toKey].Value);
+      courseForOneCoin = 1 / (toValue/toNominal);
     } else {
-      forOne = Number(allCurrencies[fromKey].Value) / Number(allCurrencies[toKey].Value);
+      courseForOneCoin = (fromValue / fromNominal) / (toValue / toNominal);
     }
-    return forOne;
+    return courseForOneCoin;
   }
 
-  deleteCourse = index => {
-    const courses = this.state.coursesList.slice();
-    courses.splice(index, 1);
-    this.setState({coursesList: courses});
-    this.updateLocalStorage(courses);
+  deleteCourseButtonHandler = index => {
+    const coursesList = this.state.coursesList.slice();
+    coursesList.splice(index, 1);
+    this.setState({coursesList: coursesList});
+    this.updateLocalStorage(coursesList);
   }
 
-  swapCourse = index => {
-    const courses = this.state.coursesList.slice();
-    let course = courses[index];
-    const newToKey = course.fromKey;
-    const newFromKey = course.toKey;
-    const newForOne = Number(1 / course.forOne);
-    const newQantity = course.quantity;
-    const newForAll = newForOne * newQantity;
-    course = { fromKey: newFromKey, toKey: newToKey, forOne: newForOne, quantity: newQantity, forAll: newForAll };
-    courses[index] = course;
-    this.setState({coursesList: courses});
+  swapCourseButtonHandler = index => {
+    const coursesList = this.state.coursesList.slice();
+    let oldCourse = coursesList[index];
+    const newCourse = this.assembleCourse(oldCourse.toKey, 
+      oldCourse.fromKey, this.state.allCurrencies, oldCourse.quantity);
+    coursesList[index] = newCourse;
+    this.setState({coursesList: coursesList});
   }
 
   calculate = (event, index) => {
-    const courses = this.state.coursesList.slice();
-    let course = courses[index];
+    const coursesList = this.state.coursesList.slice();
+    let course = coursesList[index];
     course.quantity = event.target.value;
     course.forAll = event.target.value * course.forOne;
-    courses[index] = course;
-    this.setState({ coursesList: courses });
+    coursesList[index] = course;
+    this.setState({ coursesList: coursesList });
   }
 
   componentDidMount() {
-    fetch(url)
+    fetch(URL)
       .then(res => res.json())
       .then((result) => { 
+        const dateFull = result['Date'];
+        const dateShort = new Date(dateFull).toLocaleDateString();
+
         const allCurrencies = result['Valute'];
         allCurrencies.RUB = RUB; // Добавляем рубль, которого нет в исходном списке
         
@@ -132,10 +179,11 @@ class Layout extends Component {
         } else {
           coursesList = this.setDefaultCourses(allCurrencies);
         }
-       
+
         this.setState({ 
           isLoaded: true, 
-          dateString: result['Date'],
+          dateString: dateFull,
+          dateShort: dateShort,
           allCurrencies: allCurrencies,
           coursesList: coursesList, 
         });
@@ -145,13 +193,17 @@ class Layout extends Component {
   }
   
   render() {
-    const date = new Date(this.state.dateString).toLocaleDateString();
-
     return (
     <Fragment>
-      <Header date={date} />
-      <Courses coursesList={this.state.coursesList} delete={this.deleteCourse} swap={this.swapCourse} calculate={this.calculate} />
-      <AddNewCurrency currencies={this.state.allCurrencies} addCourse={this.addCourse} />
+      <Header date={this.state.dateShort} />
+      <Courses 
+        coursesList={this.state.coursesList} 
+        delete={this.deleteCourseButtonHandler} 
+        swap={this.swapCourseButtonHandler} 
+        calculate={this.calculate} />
+      <AddNewCurrency 
+        currencies={this.state.allCurrencies} 
+        addCourse={this.addCourseButtonHandler} />
     </Fragment>
     );
   }
