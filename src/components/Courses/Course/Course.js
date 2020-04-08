@@ -13,16 +13,43 @@ const createMarkup = symbols => {
 
 const course = props => {
     return (
-    <div className='currency-courses'>
-      <input className='currency-courses__from-quantity' type='number' defaultValue={props.quantity} min='0' onChange={(e) => props.calculate(e, props.ind)}/>
-      <span className='currency-courses valute-key' title={props.fromName}>{props.fromKey}</span>
-      <span dangerouslySetInnerHTML={createMarkup(props.fromSymbol)} />
-      <img className='currency-courses__arrow' src={arrow} alt='Поменять местами' onClick={props.swap} />
-      <span>{Number(props.forAll).toFixed(2)}</span>
-      <span className='currency-courses valute-key' title={props.toName}>{props.toKey}</span>
-      <span dangerouslySetInnerHTML={createMarkup(props.toSymbol)} />
-      <img className='currency-courses__close' src={close} alt='Удалить курс' onClick={props.delete} />
-    </div>
+     <form className='currency-course'>
+
+      <div className='from-course'>      
+        <label htmlFor='from-input'>{props.fromName}</label>
+        <div className='input-group'>
+          <input 
+            id='from-input'
+            className='form-control' 
+            type='number' 
+            defaultValue={props.quantity} 
+            min='0' 
+            onChange={(e) => props.calculate(e, props.ind)}/>
+          <div className="input-group-append">
+            <span className='input-group-text' dangerouslySetInnerHTML={createMarkup(props.fromSymbol)} />
+          </div>
+        </div>
+      </div>
+      
+      <img className='currency-course__arrow' src={arrow} alt='Поменять местами' onClick={props.swap} />
+
+      <div className='to-course'>
+        <label htmlFor='from-input'>{props.toName}</label>
+        <div className='input-group'>
+          <input 
+            className="form-control" 
+            type="text" 
+            placeholder={Number(props.forAll).toFixed(2)} 
+            readOnly />
+          <div className="input-group-append">
+            <span className='input-group-text' dangerouslySetInnerHTML={createMarkup(props.toSymbol)} />
+          </div>
+        </div>
+      </div>
+
+      <img className='currency-course__close' src={close} alt='Удалить курс' onClick={props.delete} />
+
+    </form>
     );
 }
 

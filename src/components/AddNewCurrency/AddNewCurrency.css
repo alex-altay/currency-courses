@@ -1,6 +1,28 @@
-.add-currency {
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid grey;
-  border-radius: 5px;
+.add-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 13px;
+}
+.from, .to {
+  margin-right: 15px;
+}
+.add-button {
+  margin: 18px 0 0 0;
+}
+
+@media (max-width: 620px) {
+  .add-course {
+    padding: 7px;
+  }
+  .add-line {
+    flex-direction: column;
+  }
+  #fromKey, #toKey, .add-button {
+    width: 306px;
+  }
 }

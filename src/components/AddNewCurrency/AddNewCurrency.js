@@ -8,23 +8,30 @@ const addNewCurrency = props => {
   currenciesList = currenciesList.map(c => <option key={c[0]} value={c[0]}>{c[1]}</option>);
 
   return (
-    <div className='add-currency'>
-      <h3>Добавить валюту</h3>
-      <form onSubmit={props.addCourse}>
-        <label htmlFor='fromKey'>У меня есть</label>
-        <select id='fromKey' required readOnly>
-          {currenciesList}
-        </select>
-        
-        <label htmlFor='fromKey'>Хочу приобрести</label>
-        <select id='toKey' required readOnly>
-          {currenciesList}
-        </select>
+      
+      <form className='add-course' onSubmit={props.addCourse}>
+       
+        <h3>Добавить валюту</h3>
 
-        <button type='submit'>OK</button>  
+        <div className='add-line'>
+         <div className='from'>
+            <label htmlFor='fromKey'>У меня есть</label>
+            <select id='fromKey' className="form-control" required readOnly>
+              {currenciesList}
+            </select>
+          </div>
+          
+          <div className='to'>
+            <label htmlFor='toKey'>Хочу приобрести</label>
+            <select id='toKey' className="form-control" required readOnly>
+              {currenciesList}
+            </select>
+          </div>
+        
+          <button type='submit' className="btn btn-primary add-button">Добавить</button>  
+        </div>
+      
       </form> 
-  </div>
-  
   );
 }
 

@@ -1,9 +1,60 @@
-.currency-courses__arrow, 
-.currency-courses__close {
-  height: 20px;
-  margin: 0 20px;
+form {
+  margin-bottom: 40px;
+}
+
+.currency-course {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 15px 15px 30px 30px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+}
+
+.to-course {
+  margin-right: 0px;
+}
+
+.from-course, .to-course {
+  min-width: 280px;
+}
+
+label {
+  margin-bottom: 3px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+
+.currency-course__arrow, 
+.currency-course__close {
   cursor: pointer;
 }
-.valute-key {
-  margin: 0 20px;
+.currency-course__arrow {
+  height: 20px;
+  margin-top: 27px;
+}
+.currency-course__close {
+  height: 14px;
+  margin: 31px 20px 0 0;
+}
+
+@media (max-width: 620px) {
+  form {
+    margin-bottom: 21px;
+  }
+  .currency-course {
+    flex-direction: column;
+    padding: 7px;
+  }
+  .currency-course__arrow {
+    display: none;
+  }
+  .currency-course__close {
+    height: 10px;
+    position: absolute;
+    margin: 0;
+    right: 20px;
+  }
+
+
 }
