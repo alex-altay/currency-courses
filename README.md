@@ -1,68 +1,25 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Тестовое задание
 
-## Available Scripts
+Страничка с курсами валют от ЦБ РФ, получаемыми через API [cbr-xml-daily.ru](https://www.cbr-xml-daily.ru).<br>
+Сделано на Реакте. Стили элементов взял из Бутстрапа (никогда его не использовал и было интересно попробовать).<br>
 
-In the project directory, you can run:
+Посмотреть результат можно [здесь](https://alex-altay.github.io/currency-courses/).
 
-### `npm start`
+### Описание задания как было получено от компании:
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Реализовать SPA отображающее актуальные курсы для выбранных валют и калькулятор <br>
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Приложение должно: <br>
+1. Быть реализовано на React js + Redux или Angular. <br>
+2. Показывать дефолтные пары. Рубли - Доллары, Рубли - Евро.<br> 
+3. Позволять добавлять/удалять дополнительные пары валют<br>
+4. Содержать калькулятор, который по выбранной паре валют позволит рассчитать сумму средств в другой валюте.<br> 
+5. Информация по отображаемым парам должна запоминаться, чтобы не настраивать каждый раз с нуля и сохраняться при обновлении страницы.<br> 
+6. Иметь приятный интерфейс, адекватно реагирующий на изменение размеров окна браузера. Добавить картинки флагов государств у валют, символы валют и т.д. Всё, чтобы было комфортно. 
+7. API для получения актуальных курсов найти самостоятельно.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### Мои комментарии к реализации:
+Пункт 1. Redux здесь избыточен, обычного стейта достаточно. <br>
+Пункт 5. Делал по принципу YAGNI, поэтому запоминание информации по выбранным парам сделал через localStorage. Здесь, естественно можно многое что ещё добавить, поскольку пользователь может сам в него записать что угодно. <br>
+Пункт 6. Поскольку дизайна нет и тебе нужно придумывать его самому, то на мой взгляд и флаги, и символы валют для одной валюты это перебор, к тому же возникают вопросы с флагами для стран Евросоюза (Какие использовать? Если у них всеравно евро? Или наоборот если страна в ЕС, но использует пока только свою валюту). Это скорее только запутает пользователя. Использовал только символы валют. Реализовать и флаги тоже естественно не проблема. <br>
